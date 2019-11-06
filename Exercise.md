@@ -15,7 +15,7 @@ Mapping type_post and industries is data-industries.csv
 |Teacher|Education|
 |Quorum|Math|
 
-## Expect result
+## Expected result
 ```
 Education	2008	35063
 Education	2009	101026
