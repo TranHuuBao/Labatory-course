@@ -10,7 +10,7 @@
 Mapping type_post and industries is data-industries.csv
 Example:
 |industrial|type_post|
-|--|--|
+|--|--
 |Teacher|Education|
 |Scholar|Education|
 
@@ -20,6 +20,6 @@ Education	2008	35063
 Education	2009	101026
 ```
 
-#Exercise 2
+# Exercise 2
 ## Problem
 
