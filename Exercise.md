@@ -10,9 +10,9 @@
 Mapping type_post and industries is data-industries.csv
  - Example:
 | industry | type_post |
-|--|--|
-|Teacher|Education|
-|Scholar|Education|
+|--|--
+|Teacher|Education
+|Scholar|Education
 
 ## Expect result
 ```
