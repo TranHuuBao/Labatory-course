@@ -8,7 +8,7 @@
 |3|2008-09-15T08:55:03.957|82947|Teacher|false|994 
 
 Mapping type_post and industries is data-industries.csv
-Example:
+ - Example:
 |industrial|type_post|
 |--|--
 |Teacher|Education|
