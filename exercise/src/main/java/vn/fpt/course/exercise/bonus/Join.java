@@ -56,7 +56,7 @@ public class Join {
                         queue.add(data);
                     }
                     else
-                        context.write(new Text(name), new Text(value));
+                        context.write(new Text(name), new Text(data));
                 }
                 else if (parts[0].equals("right"))
                 {
