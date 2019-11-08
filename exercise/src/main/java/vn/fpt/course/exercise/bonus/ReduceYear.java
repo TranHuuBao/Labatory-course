@@ -1,4 +1,4 @@
-package vn.fpt.course.exercise1bonus;
+package vn.fpt.course.exercise.bonus;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -13,14 +13,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-public class MapReduce {
+public class ReduceYear {
     public static class Map extends Mapper<LongWritable, Text,Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException{
-            // value is a line in input file
-            String[] arr = value.toString().split(",");
-            context.write(new Text(arr[3]+ "\t" + arr[1].substring(0,4)), new IntWritable(1));
-            // key: post_type   year
-            // value: 1
+            String[] arr = value.toString().split("\t");
+            context.write(new Text(arr[0] + "\t" + arr[1]), new IntWritable(Integer.parseInt(arr[2])));
         }
     }
     public static class Reduce extends Reducer<Text,IntWritable,Text,IntWritable> {
@@ -37,8 +34,8 @@ public class MapReduce {
     public static void main(String[] args) throws Exception {
         // create configure for job
         Configuration conf= new Configuration();
-        Job job = new Job(conf,"Count Post Each Year");
-        job.setJarByClass(MapReduce.class);
+        Job job = new Job(conf,"Count by Industry");
+        job.setJarByClass(ReduceYear.class);
         // set class for map phase
         job.setMapperClass(Map.class);
         // set class for suffle phase
@@ -51,6 +48,7 @@ public class MapReduce {
         job.setOutputValueClass(IntWritable.class);
         Path outputPath = new Path(args[1]);
         //Configuring the input/output path from the filesystem into the job
+        // get output of join job
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         //deleting the output path automatically from hdfs so that we don't have to delete it explicitly

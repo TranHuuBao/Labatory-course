@@ -1,4 +1,4 @@
-package vn.fpt.course.exercise1bonus;
+package vn.fpt.course.exercise;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -13,11 +13,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-public class ReduceYear {
+public class ReduceIndustry {
     public static class Map extends Mapper<LongWritable, Text,Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException{
             String[] arr = value.toString().split("\t");
-            context.write(new Text(arr[0] + "\t" + arr[1]), new IntWritable(Integer.parseInt(arr[2])));
+            context.write(new Text(arr[0]), new IntWritable(Integer.parseInt(arr[1])));
         }
     }
     public static class Reduce extends Reducer<Text,IntWritable,Text,IntWritable> {
@@ -35,7 +35,7 @@ public class ReduceYear {
         // create configure for job
         Configuration conf= new Configuration();
         Job job = new Job(conf,"Count by Industry");
-        job.setJarByClass(ReduceYear.class);
+        job.setJarByClass(ReduceIndustry.class);
         // set class for map phase
         job.setMapperClass(Map.class);
         // set class for suffle phase
@@ -46,11 +46,14 @@ public class ReduceYear {
         job.setOutputKeyClass(Text.class);
         // type value of output: sum
         job.setOutputValueClass(IntWritable.class);
-        Path outputPath = new Path(args[1]);
+
         //Configuring the input/output path from the filesystem into the job
+        // get result of previous map-reduce Join job
         FileInputFormat.addInputPath(job, new Path(args[0]));
+
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         //deleting the output path automatically from hdfs so that we don't have to delete it explicitly
+        Path outputPath = new Path(args[1]);
         outputPath.getFileSystem(conf).delete(outputPath);
         //exiting the job only if the flag value becomes false
         System.exit(job.waitForCompletion(true) ? 0 : 1);

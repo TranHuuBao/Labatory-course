@@ -1,5 +1,5 @@
-package vn.fpt.course.exercise1;
-import java.io.IOException;
+package vn.fpt.course.exercise;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
@@ -9,7 +9,11 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-public class MapReduceJoin {
+
+import java.io.IOException;
+
+public class Join {
+    // collect data post: data-badges.csv
     public static class PostMapper extends Mapper <Object, Text, Text, Text>
     {
         public void map(Object key, Text value, Context context)
@@ -17,21 +21,23 @@ public class MapReduceJoin {
         {
             String record = value.toString();
             String[] parts = record.split(",");
-            context.write(new Text(parts[3]), new Text("left   1" ));
+            // type_post -> left    1
+            context.write(new Text(parts[3]), new Text("left\t1" ));
         }
     }
-
-    public static class IndusMapper extends Mapper <Object, Text, Text, Text>
+    // collect data industry: data-industries.csv
+    public static class IndustryMapper extends Mapper <Object, Text, Text, Text>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
         {
             String record = value.toString();
             String[] parts = record.split(",");
-            context.write(new Text(parts[0]), new Text("right   " + parts[1]));
+            // type_post -> right   industry
+            context.write(new Text(parts[0]), new Text("right\t" + parts[1]));
         }
     }
-
+    // Reduce and join by type_post => industry => count_post
     public static class ReduceJoinReducer extends Reducer <Text, Text, Text, Text>
     {
         public void reduce(Text key, Iterable<Text> values, Context context)
@@ -39,20 +45,20 @@ public class MapReduceJoin {
         {
             String name = "";
             int count = 0;
-            for (Text t : values)
+            for (Text value : values)
             {
-                String parts[] = t.toString().split("  ");
-                if (parts[0].equals("left"))
+                String parts[] = value.toString().split("\t");
+                if (parts[0].equals("left")) // post
                 {
                     count++;
                 }
-                else if (parts[0].equals("right"))
+                else if (parts[0].equals("right")) // industry
                 {
                     name = parts[1];
                 }
             }
             String str = String.format("%d", count);
-            if(!name.equals(""))
+            if(!name.equals("")) // industry don't interested
                 context.write(new Text(name), new Text(str));
         }
     }
@@ -60,13 +66,14 @@ public class MapReduceJoin {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = new Job(conf, "Reduce-side join");
-        job.setJarByClass(MapReduceJoin.class);
+        job.setJarByClass(Join.class);
         job.setReducerClass(ReduceJoinReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-
+        // add path data-badges.csv to map data
         MultipleInputs.addInputPath(job, new Path(args[0]),TextInputFormat.class, PostMapper.class);
-        MultipleInputs.addInputPath(job, new Path(args[1]),TextInputFormat.class, IndusMapper.class);
+        // add path data-industries.csv to map data
+        MultipleInputs.addInputPath(job, new Path(args[1]),TextInputFormat.class, IndustryMapper.class);
         Path outputPath = new Path(args[2]);
 
         FileOutputFormat.setOutputPath(job, outputPath);
