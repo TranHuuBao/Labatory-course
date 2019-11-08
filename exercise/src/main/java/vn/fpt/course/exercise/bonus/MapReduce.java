@@ -18,9 +18,7 @@ public class MapReduce {
         public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException{
             // value is a line in input file
             String[] arr = value.toString().split(",");
-            context.write(new Text(arr[3]+ "\t" + arr[1].substring(0,4)), new IntWritable(1));
-            // key: post_type   year
-            // value: 1
+            context.write(new Text(arr[3]+ "\t" + arr[1].substring(0,4)), new IntWritable(1)); // type_post \t year -> 1
         }
     }
     public static class Reduce extends Reducer<Text,IntWritable,Text,IntWritable> {
@@ -28,10 +26,11 @@ public class MapReduce {
             int sum=0;
             for(IntWritable x: values)
             {
+                //sum count
                 sum+=x.get();
             }
-            context.write(key, new IntWritable(sum));
             // output key  count
+            context.write(key, new IntWritable(sum));
         }
     }
     public static void main(String[] args) throws Exception {
@@ -41,7 +40,6 @@ public class MapReduce {
         job.setJarByClass(MapReduce.class);
         // set class for map phase
         job.setMapperClass(Map.class);
-        // set class for suffle phase
         job.setCombinerClass(Reduce.class);
         // set class for reduce phase
         job.setReducerClass(Reduce.class);

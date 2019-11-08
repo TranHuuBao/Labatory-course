@@ -27,8 +27,8 @@ public class ReduceIndustry {
             {
                 sum+=x.get();
             }
-            context.write(key, new IntWritable(sum));
             // output key  count
+            context.write(key, new IntWritable(sum));
         }
     }
     public static void main(String[] args) throws Exception {
@@ -38,7 +38,6 @@ public class ReduceIndustry {
         job.setJarByClass(ReduceIndustry.class);
         // set class for map phase
         job.setMapperClass(Map.class);
-        // set class for suffle phase
         job.setCombinerClass(Reduce.class);
         // set class for reduce phase
         job.setReducerClass(Reduce.class);

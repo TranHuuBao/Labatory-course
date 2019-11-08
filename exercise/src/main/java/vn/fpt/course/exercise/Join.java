@@ -48,7 +48,7 @@ public class Join {
             for (Text value : values)
             {
                 String parts[] = value.toString().split("\t");
-                if (parts[0].equals("left")) // post
+                if (parts[0].equals("left")) // sum number post
                 {
                     count++;
                 }

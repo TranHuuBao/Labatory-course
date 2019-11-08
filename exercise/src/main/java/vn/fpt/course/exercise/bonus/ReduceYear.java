@@ -17,6 +17,7 @@ public class ReduceYear {
     public static class Map extends Mapper<LongWritable, Text,Text, IntWritable> {
         public void map(LongWritable key, Text value, Context context) throws IOException,InterruptedException{
             String[] arr = value.toString().split("\t");
+            // industry \t year -> count
             context.write(new Text(arr[0] + "\t" + arr[1]), new IntWritable(Integer.parseInt(arr[2])));
         }
     }
@@ -25,10 +26,12 @@ public class ReduceYear {
             int sum=0;
             for(IntWritable x: values)
             {
+                // sum count
                 sum+=x.get();
             }
-            context.write(key, new IntWritable(sum));
             // output key  count
+            context.write(key, new IntWritable(sum));
+
         }
     }
     public static void main(String[] args) throws Exception {
@@ -38,7 +41,6 @@ public class ReduceYear {
         job.setJarByClass(ReduceYear.class);
         // set class for map phase
         job.setMapperClass(Map.class);
-        // set class for suffle phase
         job.setCombinerClass(Reduce.class);
         // set class for reduce phase
         job.setReducerClass(Reduce.class);
