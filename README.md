@@ -3,6 +3,7 @@
 ## Problem 
 - In the board meeting, Mr Jeff Atwood - co-founder of stackexchange want to know statistic number of  post by some industries of his website. These post was posted from start-up to currently. This was contained in data-badges.csv
 - Data of post have format:
+
 | id |date_time  |post_id|type_post|is_badge|user_id|
 |--|--|--|--|--|--
 | 3 | 2008-09-15T08:55:03.923 |82946|Teacher|false|3718
